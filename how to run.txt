@@ -1,0 +1,33 @@
+DSPHOTO PROJECT RUN STEPS
+
+to change admin details go to backend/scripts/CreateAdmin.js and change there after changing run(npm run create-second-admin) in backend
+Admin Login:
+Email: abhias1947@gmail.com
+Password: Abhishek@1234
+Email: adminDawid@gmail.com
+Password: adminDawid8
+
+1) Start Backend:
+cd C:\Users\abhis\Downloads\dsphoto\backend
+node server.js
+
+Backend runs on:
+http://localhost:8000
+
+2) Start Frontend:
+Open new terminal
+
+cd C:\Users\abhis\Downloads\dsphoto\frontend
+npm start
+
+Frontend runs on:
+http://localhost:3000
+
+Admin Panel:
+http://localhost:3000/admin
+
+If old deleted images still show:
+Open browser console using F12 → Console
+Run:
+localStorage.clear()
+Then press Ctrl + Shift + R

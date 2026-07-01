@@ -1,0 +1,8 @@
+.env
+node_modules
+build
+dist
+temp_deploy
+*.tar
+*.tar.gz
+*.sh
