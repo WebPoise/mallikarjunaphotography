@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { uploadImage } from '../api';
+import imageCompression from 'browser-image-compression';
 
 const categories = [
 	{ id: 'weddings', name: 'Weddings' },
@@ -19,26 +20,54 @@ const UploadForm = () => {
 	const [image, setImage] = useState(null);
 	const [category, setCategory] = useState(categories[0].id);
 	const [uploadStatus, setUploadStatus] = useState('');
+	const [isUploading, setIsUploading] = useState(false);
 
 	const handleSubmit = async (e) => {
 		e.preventDefault();
 
-		const formData = new FormData();
-		formData.append('title', title);
-		formData.append('description', description);
-		formData.append('image', image);
-		formData.append('category', category);
+		if (!image) {
+			setUploadStatus('Please select an image.');
+			return;
+		}
 
 		try {
+			setIsUploading(true);
+			setUploadStatus('Compressing image...');
+
+			console.log('Original Size:', image.size / 1024 / 1024, 'MB');
+
+			const compressedImage = await imageCompression(image, {
+				maxSizeMB: 1,
+				maxWidthOrHeight: 1600,
+				useWebWorker: true,
+			});
+
+			console.log(
+				'Compressed Size:',
+				compressedImage.size / 1024 / 1024,
+				'MB',
+			);
+
+			const formData = new FormData();
+			formData.append('title', title);
+			formData.append('description', description);
+			formData.append('image', compressedImage, compressedImage.name);
+			formData.append('category', category);
+
+			setUploadStatus('Uploading image...');
+
 			await uploadImage(formData);
+
 			setUploadStatus('Image uploaded successfully!');
 			setTitle('');
 			setDescription('');
 			setImage(null);
-			setCategory(categories[0].id); // Reset category to the first one
+			setCategory(categories[0].id);
 		} catch (error) {
 			console.error('Error uploading image', error);
 			setUploadStatus('Error uploading image.');
+		} finally {
+			setIsUploading(false);
 		}
 	};
 
@@ -47,17 +76,21 @@ const UploadForm = () => {
 			<h2 className="text-2xl font-bold mb-6 text-center">
 				Upload New Image
 			</h2>
+
 			{uploadStatus && (
 				<p
 					className={`mb-4 ${
 						uploadStatus.includes('successfully')
 							? 'text-green-500'
-							: 'text-red-500'
+							: uploadStatus.includes('Error')
+							? 'text-red-500'
+							: 'text-blue-500'
 					}`}
 				>
 					{uploadStatus}
 				</p>
 			)}
+
 			<form
 				onSubmit={handleSubmit}
 				encType="multipart/form-data"
@@ -76,6 +109,7 @@ const UploadForm = () => {
 						className="w-full p-3 border border-gray-300 rounded-lg"
 					/>
 				</div>
+
 				<div>
 					<label className="block text-sm font-medium text-gray-700 mb-2">
 						Description
@@ -89,6 +123,7 @@ const UploadForm = () => {
 						rows="4"
 					></textarea>
 				</div>
+
 				<div>
 					<label className="block text-sm font-medium text-gray-700 mb-2">
 						Category
@@ -105,22 +140,26 @@ const UploadForm = () => {
 						))}
 					</select>
 				</div>
+
 				<div>
 					<label className="block text-sm font-medium text-gray-700 mb-2">
 						Select Image
 					</label>
 					<input
 						type="file"
+						accept="image/*"
 						onChange={(e) => setImage(e.target.files[0])}
 						required
 						className="w-full p-3 border border-gray-300 rounded-lg"
 					/>
 				</div>
+
 				<button
 					type="submit"
-					className="w-full bg-lollipop text-white py-3 rounded-lg hover:bg-earthyBrown transition-all"
+					disabled={isUploading}
+					className="w-full bg-lollipop text-white py-3 rounded-lg hover:bg-earthyBrown transition-all disabled:opacity-50 disabled:cursor-not-allowed"
 				>
-					Upload
+					{isUploading ? 'Uploading...' : 'Upload'}
 				</button>
 			</form>
 		</div>
