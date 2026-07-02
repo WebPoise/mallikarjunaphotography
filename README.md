@@ -1,6 +1,6 @@
 ## Contact
 
-**Abhishek M**
+**Abhishek R**
 Founder & Developer – WebPoise
 
 🌐 Website: https://www.webpoise.in
