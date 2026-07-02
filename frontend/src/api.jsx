@@ -1,4 +1,5 @@
 import axios from 'axios';
+console.log("NEW API FILE LOADED - 120 sec timeout");
 
 const API_URL =
 	process.env.REACT_APP_API_URL ||
@@ -90,6 +91,7 @@ export const fetchImages = () => API.get('/images');
 
 export const uploadImage = (formData) =>
 	API.post('/images', formData, {
+		timeout: 120000,
 		headers: {
 			'Content-Type': 'multipart/form-data',
 		},
