@@ -247,7 +247,7 @@ const Admin = () => {
 	return (
 		<div className="container mx-auto px-4 py-8 mt-20">
 			<Helmet>
-				<title>Admin Panel | FotoDS</title>
+				<title>Admin Panel | MalliKarjuna</title>
 			</Helmet>
 
 			<div className="space-y-8">
